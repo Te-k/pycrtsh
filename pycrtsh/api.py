@@ -8,6 +8,9 @@ class CrtshInvalidRequestType(Exception):
     def __init__(self):
         Exception.__init__(self, "Invalid request type")
 
+class CrtshCertificateNotFound(Exception):
+    def __init__(self):
+        Exception.__init__(self, "Certificate not found")
 
 class Crtsh(object):
     def __init__(self):
@@ -41,7 +44,7 @@ class Crtsh(object):
     def get(self, query, type="sha1"):
         """
         Search for a certificate with the given value of the given type
-        value can be either a crtsh id, or sha1, or sha256
+        value can be either a crtsh id, sha1 or sha256
         type has to be in ['id', 'sha1', 'sha256']
         """
         if type not in ["sha1", "sha256", "id"]:
@@ -52,7 +55,7 @@ class Crtsh(object):
             r = requests.get('https://crt.sh/', params={'q': query})
 
         if "<BR><BR>Certificate not found </BODY>" in r.text:
-            return {"found": False}
+            raise CrtshCertificateNotFound()
 
         soup = BeautifulSoup(r.text, 'lxml')
         table = soup.find_all('table')[1]
@@ -154,7 +157,7 @@ class Crtsh(object):
             # Warning : does not parse all the X509 extensions
             i += 1
 
-        return {"found": True, "cert": cert}
+        return cert
 
 
 
