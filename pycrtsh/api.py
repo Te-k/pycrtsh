@@ -1,5 +1,6 @@
 import requests
 import json
+import re
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
 
@@ -18,6 +19,7 @@ class Crtsh(object):
         Query can be domain, sha1, sha256...
         """
         r = requests.get('https://crt.sh/', params={'q': query})
+        nameparser = re.compile("([a-zA-Z]+)=(\"[^\"]+\"|[^,]+)")
         soup = BeautifulSoup(r.text, 'lxml')
         certs = []
         tables = soup.find_all('table')
@@ -31,7 +33,7 @@ class Crtsh(object):
                 'ca': {
                     'caid': values[3].a['href'][6:],
                     'name': values[3].text,
-                    'parsed_name': dict([a.split("=") for a in values[3].text.split(",")])
+                    'parsed_name': dict(nameparser.findall(values[3].text))
                 }
             })
         return certs
