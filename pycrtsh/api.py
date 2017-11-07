@@ -26,6 +26,8 @@ class Crtsh(object):
         soup = BeautifulSoup(r.text, 'lxml')
         certs = []
         tables = soup.find_all('table')
+        if 'None found' in str(tables[1]):
+            return certs
         lines = tables[2].find_all('tr')
         for c in lines[1:]:
             values = c.find_all('td')

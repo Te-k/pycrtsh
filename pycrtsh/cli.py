@@ -33,6 +33,8 @@ def main():
             print(json.dumps(res, sort_keys=True, indent=4, default=datetime_handler))
         elif args.which == "domain":
             res = crt.search(args.DOMAIN)
+            if len(res) == 0:
+                print("No certificate found!")
             for r in res:
                 if len(r["id"]) < 8:
                     print("%s\t\t%s\t%s\t%s" % (
