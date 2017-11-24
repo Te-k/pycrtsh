@@ -1,1 +1,1 @@
-from .api import Crtsh
+from .api import Crtsh, CrtshInvalidRequestType, CrtshCertificateNotFound
