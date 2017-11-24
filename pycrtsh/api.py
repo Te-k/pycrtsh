@@ -58,11 +58,18 @@ class Crtsh(object):
 
         if "<BR><BR>Certificate not found </BODY>" in r.text:
             raise CrtshCertificateNotFound()
+        if "<BR><BR>Invalid value:" in r.text:
+            raise CrtshCertificateNotFound()
 
         soup = BeautifulSoup(r.text, 'lxml')
         table = soup.find_all('table')[1]
         cert = {}
         lines1 = table.find_all('tr', recursive=False)
+        if len(lines1) < 7:
+            # It means that we are in a research not in a certificate description
+            # ie https://crt.sh/?q=sha1
+            raise CrtshCertificateNotFound()
+
         cert['id'] = lines1[0].td.text
         cert['sha256'] = lines1[4].a.text
         cert['sha1'] = lines1[5].td.text
