@@ -4,15 +4,23 @@ import re
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
 
+
 class CrtshInvalidRequestType(Exception):
+    """Exception if the request is invalid"""
     def __init__(self):
         Exception.__init__(self, "Invalid request type")
 
+
 class CrtshCertificateNotFound(Exception):
+    """Exception if a certificate is not found"""
     def __init__(self):
         Exception.__init__(self, "Certificate not found")
 
+
 class Crtsh(object):
+    """
+    Main Crtsh object
+    """
     def __init__(self):
         pass
 
@@ -50,7 +58,7 @@ class Crtsh(object):
         type has to be in ['id', 'sha1', 'sha256']
         """
         if type not in ["sha1", "sha256", "id"]:
-            raise CrtshyInvalidRequestType()
+            raise CrtshInvalidRequestType()
         if type == "id":
             r = requests.get('https://crt.sh/', params={'id': query})
         else:
@@ -96,7 +104,7 @@ class Crtsh(object):
                 i += 1
                 while certinfo[i].startswith('\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0'):
                     split = certinfo[i].split("=")
-                    cert['issuer'][split[0].strip()] =split[1].strip().replace('\xa0', ' ')
+                    cert['issuer'][split[0].strip()] = split[1].strip().replace('\xa0', ' ')
                     i += 1
                 i -= 1
             if "\xa0Not\xa0Before:" in certinfo[i]:
@@ -108,11 +116,11 @@ class Crtsh(object):
                 i += 1
                 while certinfo[i].startswith('\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0'):
                     split = certinfo[i].split("=")
-                    cert['subject'][split[0].strip()] =split[1].strip().replace('\xa0', ' ')
+                    cert['subject'][split[0].strip()] = split[1].strip().replace('\xa0', ' ')
                     i += 1
                 i -= 1
             if "Subject\xa0Public\xa0Key\xa0Info:</a>" in certinfo[i]:
-                cert["publickey"] = { 'sha256': certinfo[i].split("=")[2][:64] }
+                cert["publickey"] = { 'sha256': certinfo[i].split("=")[2][:64]}
             if "Public\xa0Key\xa0Algorithm" in certinfo[i]:
                 cert["publickey"]["algorithm"] = certinfo[i].split(":")[1].strip()
             if "\xa0Public-Key:\xa0(" in certinfo[i]:
@@ -140,7 +148,9 @@ class Crtsh(object):
                 i += 1
                 cert["extensions"]["basic_constraints"] = ("CA:FALSE" not in certinfo[i])
             if "X509v3\xa0Key\xa0Usage:" in certinfo[i]:
-                cert["extensions"]["key_usage"] = {"critical": ("Usage:\xa0critical" in certinfo[i])}
+                cert["extensions"]["key_usage"] = {
+                    "critical": ("Usage:\xa0critical" in certinfo[i])
+                }
                 i += 1
                 cert["extensions"]["key_usage"]["usage"] = [a.strip().replace("\xa0", " ") for a in certinfo[i].split(",")]
             if "X509v3\xa0CRL\xa0Distribution\xa0Points:" in certinfo[i]:
@@ -165,19 +175,4 @@ class Crtsh(object):
                 i -= 1
             # Warning : does not parse all the X509 extensions
             i += 1
-
         return cert
-
-
-
-
-
-
-
-
-
-
-
-
-
-
