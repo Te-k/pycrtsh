@@ -87,7 +87,9 @@ class Crtsh(object):
             if "Version:" in certinfo[i]:
                 cert['version'] = certinfo[i].strip().split("\xa0")[1]
             if "Serial\xa0Number:" in certinfo[i]:
-                cert['serial'] = certinfo[i][25:57]
+                # Size of serial may change
+                ends = certinfo[i][25:].find('"')
+                cert['serial'] = certinfo[i][25:25+ends]
             if "Signature\xa0Algorithm:" in certinfo[i]:
                 if 'signature_algorithm' in cert.keys():
                     signature = ""
