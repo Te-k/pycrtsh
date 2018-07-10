@@ -43,10 +43,11 @@ class Crtsh(object):
                 'id': values[0].text,
                 'logged_at': parse(values[1].text),
                 'not_before': parse(values[2].text),
+                'not_after': parse(values[3].text),
                 'ca': {
-                    'caid': values[3].a['href'][6:],
-                    'name': values[3].text,
-                    'parsed_name': dict(nameparser.findall(values[3].text))
+                    'caid': values[4].a['href'][6:],
+                    'name': values[4].text,
+                    'parsed_name': dict(nameparser.findall(values[4].text))
                 }
             })
         return certs
