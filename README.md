@@ -11,10 +11,7 @@ cd pycrtsh
 pip install .
 ```
 
-Or add to your requirements.txt :
-```
-git+https://github.com/Te-k/pycrtsh.git
-```
+Or install it directly from PyPi : `pip install pycrtsh`
 
 ## CLI
 
