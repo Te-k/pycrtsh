@@ -13,7 +13,7 @@ setup(
     author='Tek',
     author_email='tek@randhome.io',
     keywords='security',
-    install_requires=['requests', 'lxml==4.2.6', 'beautifulsoup4==4.7.0'],
+    install_requires=['requests', 'lxml==4.2.6', 'beautifulsoup4==4.7.0', 'python-dateutil'],
     license='MIT',
     packages=['pycrtsh'],
     entry_points= {
