@@ -45,9 +45,9 @@ class Crtsh(object):
                 'not_before': parse(values[2].text),
                 'not_after': parse(values[3].text),
                 'ca': {
-                    'caid': values[4].a['href'][6:],
-                    'name': values[4].text,
-                    'parsed_name': dict(nameparser.findall(values[4].text))
+                    'caid': values[5].a['href'][6:],
+                    'name': values[5].text,
+                    'parsed_name': dict(nameparser.findall(values[5].text))
                 }
             })
         return certs
