@@ -1,14 +1,14 @@
 import argparse
-import os
-import sys
 import json
 import datetime
 from .api import Crtsh
+
 
 def datetime_handler(x):
     if isinstance(x, datetime.datetime):
         return x.isoformat()
     raise TypeError("Unknown type")
+
 
 def main():
     parser = argparse.ArgumentParser(description='Request crt.sh')
@@ -24,7 +24,7 @@ def main():
     if hasattr(args, 'which'):
         crt = Crtsh()
         if args.which == 'cert':
-            types = { 32: "serial", 40: "sha1", 64: "sha256"}
+            types = {32: "serial", 40: "sha1", 64: "sha256"}
             try:
                 t = types[len(args.VALUE)]
             except KeyError:
@@ -36,8 +36,8 @@ def main():
             if len(res) == 0:
                 print("No certificate found!")
             for r in res:
-                if len(r["id"]) < 8:
-                    print("%s\t\t%s\t%s\t%s" % (
+                if len(str(r["id"])) < 8:
+                    print("%i\t\t%s\t%s\t%s" % (
                             r["id"],
                             r["logged_at"].isoformat(),
                             r["not_before"].isoformat(),
@@ -45,7 +45,7 @@ def main():
                         )
                     )
                 else:
-                    print("%s\t%s\t%s\t%s" % (
+                    print("%i\t%s\t%s\t%s" % (
                             r["id"],
                             r["logged_at"].isoformat(),
                             r["not_before"].isoformat(),

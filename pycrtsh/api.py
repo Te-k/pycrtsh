@@ -1,5 +1,4 @@
 import requests
-import json
 import re
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
@@ -29,25 +28,20 @@ class Crtsh(object):
         Search crt.sh with the give query
         Query can be domain, sha1, sha256...
         """
-        r = requests.get('https://crt.sh/', params={'q': query})
+        r = requests.get('https://crt.sh/', params={'q': query, 'output': 'json'})
         nameparser = re.compile("([a-zA-Z]+)=(\"[^\"]+\"|[^,]+)")
-        soup = BeautifulSoup(r.text, 'lxml')
         certs = []
-        tables = soup.find_all('table')
-        if 'None found' in str(tables[1]):
-            return certs
-        lines = tables[2].find_all('tr')
-        for c in lines[1:]:
-            values = c.find_all('td')
+        for c in r.json():
             certs.append({
-                'id': values[0].text,
-                'logged_at': parse(values[1].text),
-                'not_before': parse(values[2].text),
-                'not_after': parse(values[3].text),
+                'id': c['min_cert_id'],
+                'logged_at': parse(c['min_entry_timestamp']),
+                'not_before': parse(c['not_before']),
+                'not_after': parse(c['not_after']),
+                'name': c['name_value'],
                 'ca': {
-                    'caid': values[4].a['href'][6:],
-                    'name': values[4].text,
-                    'parsed_name': dict(nameparser.findall(values[4].text))
+                    'caid': c['issuer_ca_id'],
+                    'name': c['issuer_name'],
+                    'parsed_name': dict(nameparser.findall(c['issuer_name']))
                 }
             })
         return certs
@@ -123,7 +117,7 @@ class Crtsh(object):
                     i += 1
                 i -= 1
             if "Subject\xa0Public\xa0Key\xa0Info:</a>" in certinfo[i]:
-                cert["publickey"] = { 'sha256': certinfo[i].split("=")[2][:64]}
+                cert["publickey"] = {'sha256': certinfo[i].split("=")[2][:64]}
             if "Public\xa0Key\xa0Algorithm" in certinfo[i]:
                 cert["publickey"]["algorithm"] = certinfo[i].split(":")[1].strip()
             if "\xa0Public-Key:\xa0(" in certinfo[i]:
@@ -161,7 +155,7 @@ class Crtsh(object):
                 cert["extensions"]["crl_distribution"] = {"url": certinfo[i].split("URI:")[1].strip()}
             if "X509v3\xa0Extended\xa0Key\xa0Usage:" in certinfo[i]:
                 i += 1
-                cert["extensions"]["extended_key_usage"] = { "usage": [a.strip().replace("\xa0", " ") for a in certinfo[i].split(",")]}
+                cert["extensions"]["extended_key_usage"] = {"usage": [a.strip().replace("\xa0", " ") for a in certinfo[i].split(",")]}
             if "X509v3\xa0Authority\xa0Key\xa0Identifier:" in certinfo[i]:
                 i += 1
                 cert["extensions"]["authority_key_identifier"] = certinfo[i][22:].replace(":", "")
