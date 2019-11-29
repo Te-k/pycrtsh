@@ -1,5 +1,9 @@
 # Pycrtsh
 
+![PyPI](https://img.shields.io/pypi/v/pycrtsh)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/pycrtsh)
+![GitHub](https://img.shields.io/github/license/te-k/pycrtsh)
+
 Python 3 library to request https://crt.sh/
 
 ## Install
@@ -11,7 +15,7 @@ cd pycrtsh
 pip install .
 ```
 
-Or install it directly from PyPi : `pip install pycrtsh`
+Or install it directly from [PyPi](https://pypi.org/project/pycrtsh/) : `pip install pycrtsh`
 
 ## CLI
 
