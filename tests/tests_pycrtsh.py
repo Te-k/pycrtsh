@@ -17,7 +17,6 @@ class TestUtils(unittest.TestCase):
         self.assertTrue('alternative_names' in cert['extensions'])
         self.assertEqual(len(cert['extensions']['alternative_names']), 2)
 
-
     def test_get_unknown_id(self):
         crt = Crtsh()
         try:
@@ -43,6 +42,11 @@ class TestUtils(unittest.TestCase):
         crt = Crtsh()
         cert = crt.get('146290136')
         self.assertEqual(cert['serial'], '24d427be1877104b4eef1a85')
+
+    def test_search(self):
+        crt = Crtsh()
+        res = crt.search("okta.com")
+        self.assertTrue(len(res) > 0)
 
 
 if __name__ == '__main__':

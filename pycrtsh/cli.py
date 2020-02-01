@@ -13,7 +13,7 @@ def datetime_handler(x):
 def main():
     parser = argparse.ArgumentParser(description='Request crt.sh')
     subparsers = parser.add_subparsers(help='Commands')
-    parser_a = subparsers.add_parser('cert', help='Query an ')
+    parser_a = subparsers.add_parser('cert', help='Query a certificate (id, sha1, sha256 or serial)')
     parser_a.add_argument('VALUE', help='Value to be requested, can be a crt.sh id, sha1, sha256 or serial')
     parser_a.set_defaults(which='cert')
     parser_b = subparsers.add_parser('domain', help='List certs related to a domain')

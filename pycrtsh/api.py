@@ -33,8 +33,8 @@ class Crtsh(object):
         certs = []
         for c in r.json():
             certs.append({
-                'id': c['min_cert_id'],
-                'logged_at': parse(c['min_entry_timestamp']),
+                'id': c['id'],
+                'logged_at': parse(c['entry_timestamp']),
                 'not_before': parse(c['not_before']),
                 'not_after': parse(c['not_after']),
                 'name': c['name_value'],
@@ -121,7 +121,7 @@ class Crtsh(object):
             if "Public\xa0Key\xa0Algorithm" in certinfo[i]:
                 cert["publickey"]["algorithm"] = certinfo[i].split(":")[1].strip()
             if "\xa0Public-Key:\xa0(" in certinfo[i]:
-                cert["publickey"]["size"] = int(certinfo[i][29:].split("\xa0")[0])
+                cert["publickey"]["size"] = int(certinfo[i].split("(")[1].split("\xa0")[0])
             if "\xa0Modulus:" in certinfo[i]:
                 modulus = ""
                 i += 1
