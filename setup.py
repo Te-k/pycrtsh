@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='pycrtsh',
-    version='0.2',
+    version='0.3.0',
     description='Python library to request crt.sh certificate information',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -13,7 +13,7 @@ setup(
     author='Tek',
     author_email='tek@randhome.io',
     keywords='security',
-    install_requires=['requests', 'lxml==4.2.6', 'beautifulsoup4==4.7.0', 'python-dateutil==2.8.0'],
+    install_requires=['requests', 'lxml==4.2.6', 'beautifulsoup4==4.7.0', 'python-dateutil'],
     license='MIT',
     packages=['pycrtsh'],
     entry_points= {
