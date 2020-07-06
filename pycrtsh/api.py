@@ -68,15 +68,15 @@ class Crtsh(object):
         table = soup.find_all('table')[1]
         cert = {}
         lines1 = table.find_all('tr', recursive=False)
-        if len(lines1) < 7:
+        if len(lines1) < 6:
             # It means that we are in a research not in a certificate description
             # ie https://crt.sh/?q=sha1
             raise CrtshCertificateNotFound()
 
         cert['id'] = lines1[0].td.text
-        cert['sha256'] = lines1[4].a.text
-        cert['sha1'] = lines1[5].td.text
-        certinfo = str(lines1[6].td)[60:-6].split('<br/>')
+        cert['sha256'] = lines1[4].find("th", text="SHA-256").find_next_sibling("td").text
+        cert["sha1"] = lines1[4].find("th", text="SHA-1").find_next_sibling("td").text
+        certinfo = str(lines1[5].td)[60:-6].split("<br/>")
         i = 0
         while i < len(certinfo):
             if "Version:" in certinfo[i]:
