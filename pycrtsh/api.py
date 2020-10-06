@@ -1,5 +1,6 @@
 import requests
 import re
+import json
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
 
@@ -31,19 +32,22 @@ class Crtsh(object):
         r = requests.get('https://crt.sh/', params={'q': query, 'output': 'json'})
         nameparser = re.compile("([a-zA-Z]+)=(\"[^\"]+\"|[^,]+)")
         certs = []
-        for c in r.json():
-            certs.append({
-                'id': c['id'],
-                'logged_at': parse(c['entry_timestamp']),
-                'not_before': parse(c['not_before']),
-                'not_after': parse(c['not_after']),
-                'name': c['name_value'],
-                'ca': {
-                    'caid': c['issuer_ca_id'],
-                    'name': c['issuer_name'],
-                    'parsed_name': dict(nameparser.findall(c['issuer_name']))
-                }
-            })
+        try:
+            for c in r.json():
+                certs.append({
+                    'id': c['id'],
+                    'logged_at': parse(c['entry_timestamp']),
+                    'not_before': parse(c['not_before']),
+                    'not_after': parse(c['not_after']),
+                    'name': c['name_value'],
+                    'ca': {
+                        'caid': c['issuer_ca_id'],
+                        'name': c['issuer_name'],
+                        'parsed_name': dict(nameparser.findall(c['issuer_name']))
+                    }
+                })
+        except json.decoder.JSONDecodeError:
+            pass
         return certs
 
     def get(self, query, type="sha1"):
