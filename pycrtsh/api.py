@@ -24,12 +24,12 @@ class Crtsh(object):
     def __init__(self):
         pass
 
-    def search(self, query):
+    def search(self, query, timeout=None):
         """
         Search crt.sh with the give query
         Query can be domain, sha1, sha256...
         """
-        r = requests.get('https://crt.sh/', params={'q': query, 'output': 'json'})
+        r = requests.get('https://crt.sh/', params={'q': query, 'output': 'json'}, timeout=timeout)
         nameparser = re.compile("([a-zA-Z]+)=(\"[^\"]+\"|[^,]+)")
         certs = []
         try:
