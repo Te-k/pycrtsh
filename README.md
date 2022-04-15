@@ -108,7 +108,7 @@ details = c.get(certs[0]["id"], type="id")
 
 ## Tests
 
-You can run tests in teh test folder with `python -m unittest`
+You can run tests with `pytest`
 
 ## Licence
 

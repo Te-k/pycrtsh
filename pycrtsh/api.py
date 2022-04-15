@@ -78,9 +78,14 @@ class Crtsh(object):
             raise CrtshCertificateNotFound()
 
         cert['id'] = lines1[0].td.text
-        cert['sha256'] = lines1[4].find("th", text="SHA-256").find_next_sibling("td").text
-        cert["sha1"] = lines1[4].find("th", text="SHA-1").find_next_sibling("td").text
-        certinfo = str(lines1[5].td)[60:-6].split("<br/>")
+        for i in range(3):
+            try:
+                cert['sha256'] = lines1[i+4].find("th", text="SHA-256").find_next_sibling("td").text
+                cert["sha1"] = lines1[i+4].find("th", text="SHA-1").find_next_sibling("td").text
+                break
+            except AttributeError:
+                pass
+        certinfo = str(lines1[i+5].td)[60:-6].split("<br/>")
         i = 0
         while i < len(certinfo):
             if "Version:" in certinfo[i]:
@@ -149,10 +154,10 @@ class Crtsh(object):
                 cert["extensions"]["certificate_policies"]=[]
                 i+=1
                 while certinfo[i].startswith("\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0Policy:"):
-                    cert["extensions"]["certificate_policies"].append(certinfo[i][23:].strip())      
+                    cert["extensions"]["certificate_policies"].append(certinfo[i][23:].strip())
                     i+=1
                     if certinfo[i].startswith("\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0CPS:"):
-                        i+=1                    
+                        i+=1
                 i -=1
             if "X509v3\xa0Basic\xa0Constraints:\xa0" in certinfo[i]:
                 i += 1
