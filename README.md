@@ -8,14 +8,16 @@ Python 3 library to request https://crt.sh/
 
 ## Install
 
-To install, either download the code and install it manually :
+To install pycrtsh, you will first need to install [lxml](https://lxml.de/installation.html) depencies, on debian-like distributions this command should do it `sudo apt-get install libxml2-dev libxslt-dev python-dev` (otherwise, please refer to the lxml doc)
+
+Then you can install it directly from [PyPi](https://pypi.org/project/pycrtsh/) : `pip install pycrtsh`
+
+Or from sources :
 ```bash
 git clone git@github.com:Te-k/pycrtsh.git
 cd pycrtsh
 pip install .
 ```
-
-Or install it directly from [PyPi](https://pypi.org/project/pycrtsh/) : `pip install pycrtsh`
 
 ## CLI
 
