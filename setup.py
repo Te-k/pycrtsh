@@ -16,8 +16,8 @@ setup(
     install_requires=['requests', 'lxml==4.9.2', 'beautifulsoup4>=4.11.1', 'python-dateutil'],
     license='MIT',
     packages=['pycrtsh'],
-    entry_points= {
-        'console_scripts': [ 'certsh=pycrtsh.cli:main' ]
+    entry_points={
+        'console_scripts': ['certsh=pycrtsh.cli:main']
     },
     classifiers=[
         "Programming Language :: Python :: 3",

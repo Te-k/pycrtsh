@@ -80,8 +80,8 @@ class Crtsh(object):
         cert['id'] = lines1[0].td.text
         for i in range(3):
             try:
-                cert['sha256'] = lines1[i+4].find("th", text="SHA-256").find_next_sibling("td").text
-                cert["sha1"] = lines1[i+4].find("th", text="SHA-1").find_next_sibling("td").text
+                cert['sha256'] = lines1[i+4].find("th", string="SHA-256").find_next_sibling("td").text
+                cert["sha1"] = lines1[i+4].find("th", string="SHA-1").find_next_sibling("td").text
                 break
             except AttributeError:
                 pass
@@ -134,7 +134,8 @@ class Crtsh(object):
             if "\xa0Modulus:" in certinfo[i]:
                 modulus = ""
                 i += 1
-                while certinfo[i].startswith("\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0"):
+                while certinfo[i].startswith("\xa0\xa0\xa0\xa0\xa0\xa0\xa0" +
+                                             "\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0"):
                     modulus += certinfo[i][20:]
                     i += 1
                 cert['publickey']['modulus'] = modulus.replace(":", "")
@@ -151,14 +152,15 @@ class Crtsh(object):
                     i += 1
                 i -= 1
             if "X509v3\xa0Certificate\xa0Policies:\xa0" in certinfo[i]:
-                cert["extensions"]["certificate_policies"]=[]
-                i+=1
+                cert["extensions"]["certificate_policies"] = []
+                i += 1
                 while certinfo[i].startswith("\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0Policy:"):
                     cert["extensions"]["certificate_policies"].append(certinfo[i][23:].strip())
-                    i+=1
-                    if certinfo[i].startswith("\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0CPS:"):
-                        i+=1
-                i -=1
+                    i += 1
+                    if certinfo[i].startswith("\xa0\xa0\xa0\xa0\xa0\xa0\xa0" +
+                                              "\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0CPS:"):
+                        i += 1
+                i -= 1
             if "X509v3\xa0Basic\xa0Constraints:\xa0" in certinfo[i]:
                 i += 1
                 cert["extensions"]["basic_constraints"] = ("CA:FALSE" not in certinfo[i])
@@ -167,13 +169,15 @@ class Crtsh(object):
                     "critical": ("Usage:\xa0critical" in certinfo[i])
                 }
                 i += 1
-                cert["extensions"]["key_usage"]["usage"] = [a.strip().replace("\xa0", " ") for a in certinfo[i].split(",")]
+                cert["extensions"]["key_usage"]["usage"] = [
+                        a.strip().replace("\xa0", " ") for a in certinfo[i].split(",")]
             if "X509v3\xa0CRL\xa0Distribution\xa0Points:" in certinfo[i]:
                 i += 3
                 cert["extensions"]["crl_distribution"] = {"url": certinfo[i].split("URI:")[1].strip()}
             if "X509v3\xa0Extended\xa0Key\xa0Usage:" in certinfo[i]:
                 i += 1
-                cert["extensions"]["extended_key_usage"] = {"usage": [a.strip().replace("\xa0", " ") for a in certinfo[i].split(",")]}
+                cert["extensions"]["extended_key_usage"] = {
+                        "usage": [a.strip().replace("\xa0", " ") for a in certinfo[i].split(",")]}
             if "X509v3\xa0Authority\xa0Key\xa0Identifier:" in certinfo[i]:
                 i += 1
                 cert["extensions"]["authority_key_identifier"] = certinfo[i][22:].replace(":", "")
@@ -185,7 +189,8 @@ class Crtsh(object):
                 i += 1
                 while certinfo[i].startswith("\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0"):
                     split = certinfo[i].split("\xa0-\xa0")
-                    cert["extensions"]["authority_information_access"][split[0].strip().replace("\xa0", " ")] = split[1].strip()
+                    cert["extensions"]["authority_information_access"][
+                            split[0].strip().replace("\xa0", " ")] = split[1].strip()
                     i += 1
                 i -= 1
             # Warning : does not parse all the X509 extensions

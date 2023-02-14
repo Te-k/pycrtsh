@@ -1,1 +1,1 @@
-from .api import Crtsh, CrtshInvalidRequestType, CrtshCertificateNotFound
+from .api import Crtsh, CrtshInvalidRequestType, CrtshCertificateNotFound  # noqa: F401
