@@ -1,6 +1,7 @@
 import requests
 import re
 import json
+from typing import Optional, List, Dict, Any
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
 
@@ -24,14 +25,14 @@ class Crtsh(object):
     def __init__(self):
         pass
 
-    def search(self, query, timeout=None):
+    def search(self, query: str, timeout: Optional[int] = None) -> List[Dict[str, Any]]:
         """
         Search crt.sh with the give query
         Query can be domain, sha1, sha256...
         """
         r = requests.get('https://crt.sh/', params={'q': query, 'output': 'json'}, timeout=timeout)
         nameparser = re.compile("([a-zA-Z]+)=(\"[^\"]+\"|[^,]+)")
-        certs = []
+        certs: List[Dict[str, Any]] = []
         try:
             for c in r.json():
                 certs.append({
@@ -50,7 +51,7 @@ class Crtsh(object):
             pass
         return certs
 
-    def get(self, query, type="sha1"):
+    def get(self, query: str, type: str="sha1") -> Dict[str, Any]:
         """
         Search for a certificate with the given value of the given type
         value can be either a crtsh id, sha1 or sha256

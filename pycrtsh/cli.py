@@ -4,7 +4,7 @@ import datetime
 from .api import Crtsh
 
 
-def datetime_handler(x):
+def datetime_handler(x: datetime.datetime) -> str:
     if isinstance(x, datetime.datetime):
         return x.isoformat()
     raise TypeError("Unknown type")
