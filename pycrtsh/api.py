@@ -1,7 +1,8 @@
-import requests
-import re
 import json
-from typing import Optional, List, Dict, Any
+import re
+from typing import Any, Dict, List, Optional
+
+import requests
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
 

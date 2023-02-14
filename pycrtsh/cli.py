@@ -1,6 +1,7 @@
 import argparse
-import json
 import datetime
+import json
+
 from .api import Crtsh
 
 
