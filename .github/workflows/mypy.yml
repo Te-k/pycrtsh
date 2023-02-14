@@ -19,7 +19,7 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install mypy
-          mypy --install-types --non-interactive
+          mypy --install-types --non-interactive .
       - name: mypy
         run: |
           mypy .
