@@ -8,7 +8,7 @@ Python 3 library to request https://crt.sh/
 
 ## Install
 
-To install pycrtsh, you will first need to install [lxml](https://lxml.de/installation.html) depencies, on debian-like distributions this command should do it `sudo apt-get install libxml2-dev libxslt-dev python-dev` (otherwise, please refer to the lxml doc)
+To install pycrtsh, you will first need to install [lxml](https://lxml.de/installation.html) and [psycopg2](https://www.psycopg.org/docs/install.html#prerequisites) depencies, on debian-like distributions this command should do it `sudo apt-get install libxml2-dev libxslt-dev libpq-dev python-dev` (otherwise, please refer to the doc).
 
 Then you can install it directly from [PyPi](https://pypi.org/project/pycrtsh/) : `pip install pycrtsh`
 
@@ -99,7 +99,23 @@ $ certsh cert 1357978
 }
 ```
 
-## Library
+Usage:
+```
+usage: certsh [-h] {cert,domain,subdomains} ...
+
+Request crt.sh
+
+positional arguments:
+  {cert,domain,subdomains}
+                        Commands
+    cert                Query a certificate (id, sha1, sha256 or
+                        serial)
+    domain              List certs related to a domain
+    subdomains          List sub-domains from a domain based on
+                        existing certificates
+```
+
+## API
 
 ```python
 from pycrtsh import Crtsh
