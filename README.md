@@ -124,6 +124,8 @@ certs = c.search("github.com")
 details = c.get(certs[0]["id"], type="id")
 ```
 
+See the detailed API on [Read the docs](https://pycrtsh.readthedocs.io/en/latest/)
+
 ## Tests
 
 You can run tests with `pytest`
