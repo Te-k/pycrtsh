@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# pycrtsh
+# Copyright (c) 2017-2023 Etienne Tek Maynier
+# This software is released under the MIT license
+# See https://opensource.org/license/mit/
 from setuptools import setup
 
 with open("README.md", "r") as fh:
@@ -18,6 +23,7 @@ setup(
         "lxml==4.9.2",
         "beautifulsoup4>=4.11.1",
         "python-dateutil",
+        "psycopg2>=2.9.6",
     ],
     license="MIT",
     packages=["pycrtsh"],

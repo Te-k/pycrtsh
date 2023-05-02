@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# pycrtsh
+# Copyright (c) 2017-2023 Etienne Tek Maynier
+# This software is released under the MIT license
+# See https://opensource.org/license/mit/
 import json
 import re
 from typing import Any, Dict, List, Optional
@@ -7,18 +12,33 @@ from bs4 import BeautifulSoup
 from dateutil.parser import parse
 
 
-class CrtshInvalidRequestType(Exception):
-    """Exception if the request is invalid"""
+class PycrtshException(Exception):
+    """
+    Main Pycrtsh exception.
+    Any exception from the library will raise a subclass of this class.
+    """
+    pass
+
+
+class CrtshInvalidRequestType(PycrtshException):
+    """This exception is raised if the request is invalid"""
 
     def __init__(self):
         Exception.__init__(self, "Invalid request type")
 
 
-class CrtshCertificateNotFound(Exception):
-    """Exception if a certificate is not found"""
+class CrtshCertificateNotFound(PycrtshException):
+    """Exception raised if a certificate is not found"""
 
     def __init__(self):
         Exception.__init__(self, "Certificate not found")
+
+
+class DependenciesNeeded(PycrtshException):
+    """Exception raised if dependencies are missing"""
+
+    def __init__(self):
+        Exception.__init__(self, "Missing dependencies, please install psycopg2")
 
 
 class Crtsh(object):
@@ -26,13 +46,17 @@ class Crtsh(object):
     Main Crtsh object
     """
 
-    def __init__(self):
-        pass
-
     def search(self, query: str, timeout: Optional[int] = None) -> List[Dict[str, Any]]:
         """
-        Search crt.sh with the give query
-        Query can be domain, sha1, sha256...
+        Search crt.sh with the given query.
+        The query can be a domain, sha1 or sha256.
+
+        Args:
+            query (str): the crt.sh query
+            timeoit (int) : optional timeout (default is None)
+
+        Returns:
+            list: list of certificates as dictionaries
         """
         r = requests.get(
             "https://crt.sh/", params={"q": query, "output": "json"}, timeout=timeout
@@ -62,8 +86,17 @@ class Crtsh(object):
     def get(self, query: str, type: str = "sha1") -> Dict[str, Any]:
         """
         Search for a certificate with the given value of the given type
-        value can be either a crtsh id, sha1 or sha256
-        type has to be in ['id', 'sha1', 'sha256']
+
+        Args:
+            query (str): value of the query, can be either a crtsh id, sha1 or sha256
+            type (str): type of the quer, can be ['id', 'sha1', 'sha256']
+
+        Returns:
+            Dictionnary with the details of the certificate information
+
+        Raises:
+            CrtshInvalidRequestType: if the query type in invalid
+            CrtshCertificateNotFound: if the certificate can't be found
         """
         if type not in ["sha1", "sha256", "id"]:
             raise CrtshInvalidRequestType()
@@ -252,3 +285,55 @@ class Crtsh(object):
             # Warning : does not parse all the X509 extensions
             i += 1
         return cert
+
+    def psql_query(self, query: str) -> List[Any]:
+        """
+        PSQL query in crt.sh database
+
+        Args:
+            query (str): PSQL query
+
+        Returns:
+            list: a list of tupes from the query
+
+        Raises:
+            DependenciesNeeded: if psycopg2 isn't installed
+        """
+        try:
+            import psycopg2
+        except ImportError:
+            raise DependenciesNeeded()
+
+        conn = psycopg2.connect("dbname=certwatch user=guest host=crt.sh")
+        conn.set_session(autocommit=True)
+        cur = conn.cursor()
+        cur.execute(query)
+        return cur.fetchall()
+
+    def subdomains(self, domain: str) -> List[str]:
+        """
+        Get a list of subdomains for a domain based on existing certificates
+
+        Args:
+            domain (str): domain name
+
+        Returns:
+            list: list of subdomains as strings
+
+        Raises:
+            DependenciesNeeded: if psycopg2 isn't installed
+        """
+        subdomains: List[str] = []
+        for entry in self.psql_query(
+            """
+            select distinct(lower(name_value))
+            FROM certificate_and_identities cai
+            WHERE plainto_tsquery('{}') @@ identities(cai.CERTIFICATE) AND
+                lower(cai.NAME_VALUE) LIKE ('%.{}')
+        """.format(
+                domain, domain
+            )
+        ):
+            if entry[0] not in subdomains and not entry[0].startswith("*."):
+                subdomains.append(entry[0])
+        return subdomains

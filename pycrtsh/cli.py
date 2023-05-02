@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# pycrtsh
+# Copyright (c) 2017-2023 Etienne Tek Maynier
+# This software is released under the MIT license
+# See https://opensource.org/license/mit/
 import argparse
 import datetime
 import json
@@ -25,6 +30,13 @@ def main():
     parser_b = subparsers.add_parser("domain", help="List certs related to a domain")
     parser_b.add_argument("DOMAIN", help="domain")
     parser_b.set_defaults(which="domain")
+    parser_c = subparsers.add_parser(
+        "subdomains",
+        help="List sub-domains from a domain based on existing certificates",
+    )
+    parser_c.add_argument("DOMAIN", help="domain")
+    parser_c.set_defaults(which="subdomains")
+
     args = parser.parse_args()
 
     if hasattr(args, "which"):
@@ -62,6 +74,9 @@ def main():
                             r["ca"]["name"],
                         )
                     )
+        elif args.which == "subdomains":
+            for d in crt.subdomains(args.DOMAIN):
+                print(d)
         else:
             parser.print_help()
     else:
