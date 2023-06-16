@@ -4,7 +4,7 @@ PWD = $(shell pwd)
 check:
 	flake8
 	black --check pycrtsh
-	mypy .
+	mypy --explicit-package-bases .
 	pytest -q
 	ruff check -q .
 

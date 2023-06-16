@@ -17,6 +17,7 @@ class PycrtshException(Exception):
     Main Pycrtsh exception.
     Any exception from the library will raise a subclass of this class.
     """
+
     pass
 
 

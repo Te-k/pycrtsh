@@ -4,6 +4,8 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 import os
 import sys
+from typing import List
+
 sys.path.insert(0, os.path.abspath('../..'))
 
 # -- Project information -----------------------------------------------------
@@ -26,9 +28,7 @@ extensions = [
 ]
 
 templates_path = ['_templates']
-exclude_patterns = []
-
-
+exclude_patterns: List[str] = []
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
