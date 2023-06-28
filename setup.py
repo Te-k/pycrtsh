@@ -23,7 +23,7 @@ setup(
         "lxml==4.9.2",
         "beautifulsoup4>=4.11.1",
         "python-dateutil",
-        "psycopg2>=2.9.6",
+        "psycopg2-binary>=2.9.6",
     ],
     license="MIT",
     packages=["pycrtsh"],
