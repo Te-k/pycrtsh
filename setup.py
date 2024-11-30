@@ -20,10 +20,10 @@ setup(
     keywords="security",
     install_requires=[
         "requests",
-        "lxml==4.9.2",
-        "beautifulsoup4>=4.11.1",
+        "lxml==5.3.0",
+        "beautifulsoup4>=4.12.3",
         "python-dateutil",
-        "psycopg2-binary>=2.9.6",
+        "psycopg2-binary>=2.9.10",
     ],
     license="MIT",
     packages=["pycrtsh"],
