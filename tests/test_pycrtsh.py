@@ -39,6 +39,17 @@ class TestUtils:
         )
         assert cert["serial"] == "00d3fc2747513084672c3739cce9a212c0"
 
+    def test_get_parsing_change(self):
+        crt = Crtsh()
+        cert = crt.get("2380562261", type="id")
+        assert cert["id"] == "2380562261"
+        assert cert["sha1"] == "AB6165D9DBC24CDED0E20473517E3BC9BD0B6413"
+        assert (
+            cert["sha256"]
+            == "BB79316B4CA1C00AF01B0A201B25417782FB418E284AEC5EF4F0C169D703B2F5"
+        )
+        assert cert["serial"] == "436071a2"
+
     def test_get_sha256(self):
         crt = Crtsh()
         cert = crt.get(
