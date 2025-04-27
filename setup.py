@@ -10,7 +10,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="pycrtsh",
-    version="0.3.12",
+    version="0.3.13",
     description="Python library to request crt.sh certificate information",
     long_description=long_description,
     long_description_content_type="text/markdown",

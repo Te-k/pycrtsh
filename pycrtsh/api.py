@@ -172,10 +172,19 @@ class Crtsh(object):
                     )
                     i += 1
                 i -= 1
-            if "\xa0Not\xa0Before:" in certinfo[i]:
-                cert["not_before"] = parse(certinfo[i][24:])
-            if "\xa0Not\xa0After\xa0:" in certinfo[i]:
-                cert["not_after"] = parse(certinfo[i][24:])
+
+            if "\xa0Not\xa0Before:" in certinfo[i] and "Not\xa0After" in certinfo[i]:
+                for param in certinfo[i].split(","):
+                    param = param.strip()
+                    if "Not\xa0Before:" in param:
+                        cert["not_before"] = parse(param[11:].strip())
+                    if "Not\xa0After:" in param:
+                        cert["not_after"] = parse(param[10:].strip())
+            else:
+                if "\xa0Not\xa0Before:" in certinfo[i]:
+                    cert["not_before"] = parse(certinfo[i][24:])
+                if "\xa0Not\xa0After\xa0:" in certinfo[i]:
+                    cert["not_after"] = parse(certinfo[i][24:])
             if "\xa0Subject:" in certinfo[i]:
                 cert["subject"] = {}
                 i += 1
@@ -249,7 +258,10 @@ class Crtsh(object):
                 cert["extensions"]["key_usage"]["usage"] = [
                     a.strip().replace("\xa0", " ") for a in certinfo[i].split(",")
                 ]
-            if "X509v3\xa0CRL\xa0Distribution\xa0Points:" in certinfo[i]:
+            if (
+                "X509v3\xa0CRL\xa0Distribution\xa0Points:" in certinfo[i]
+                and "URI:" in certinfo[i]
+            ):
                 i += 3
                 cert["extensions"]["crl_distribution"] = {
                     "url": certinfo[i].split("URI:")[1].strip()
