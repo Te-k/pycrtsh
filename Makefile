@@ -2,11 +2,9 @@ PWD = $(shell pwd)
 .PHONY: check
 
 check:
-	flake8
-	black --check pycrtsh
+	ruff check .
 	mypy --explicit-package-bases .
 	pytest -q
-	ruff check -q .
 
 clean:
 	rm -rf $(PWD)/build $(PWD)/dist $(PWD)/pycrtsh.egg-info
