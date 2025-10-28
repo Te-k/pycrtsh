@@ -2,7 +2,8 @@ PWD = $(shell pwd)
 .PHONY: check
 
 check:
-	ruff check .
+	ruff format --check .
+	ruff check -q .
 	mypy --explicit-package-bases .
 	pytest -q
 
