@@ -6,6 +6,14 @@ check:
 	mypy --explicit-package-bases .
 	pytest -q
 
+autofix:
+	ruff format .
+	ruff check --fix .
+
+ruff:
+	ruff format --check .
+	ruff check -q .
+
 clean:
 	rm -rf $(PWD)/build $(PWD)/dist $(PWD)/pycrtsh.egg-info
 

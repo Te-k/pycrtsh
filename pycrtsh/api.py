@@ -344,9 +344,7 @@ class Crtsh(object):
             FROM certificate_and_identities cai
             WHERE plainto_tsquery('{}') @@ identities(cai.CERTIFICATE) AND
                 lower(cai.NAME_VALUE) LIKE ('%.{}')
-        """.format(
-                domain, domain
-            )
+        """.format(domain, domain)
         ):
             if entry[0] not in subdomains and not entry[0].startswith("*."):
                 subdomains.append(entry[0])
