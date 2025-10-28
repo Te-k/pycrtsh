@@ -71,6 +71,13 @@ class TestUtils:
         assert "alternative_names" in cert["extensions"]
         assert len(cert["extensions"]["alternative_names"]) == 2
 
+    def test_cert_wihout_subject(self):
+        crt = Crtsh()
+        cert = crt.get("20947142300", type="id")
+        assert len(cert["subject"]) == 0
+        assert "alternative_names" in cert["extensions"]
+        assert len(cert["extensions"]["alternative_names"]) == 2
+
     def test_get_unknown_id(self):
         crt = Crtsh()
         try:
