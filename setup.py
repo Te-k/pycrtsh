@@ -20,7 +20,7 @@ setup(
     keywords="security",
     install_requires=[
         "requests",
-        "lxml==6.0.2",
+        "lxml==6.1.0",
         "beautifulsoup4>=4.14.2",
         "python-dateutil",
         "psycopg2-binary>=2.9.11",
