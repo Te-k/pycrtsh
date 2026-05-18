@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v0.3.15
+
+* Migrate to lxml 6.1.0 to fix security issues
+
 ## v0.3.11
 
 * Adds support for postgresql queries
