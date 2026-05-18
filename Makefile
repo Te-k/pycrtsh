@@ -19,7 +19,7 @@ clean:
 	rm -rf $(PWD)/build $(PWD)/dist $(PWD)/pycrtsh.egg-info
 
 dist:
-	python3 setup.py sdist bdist_wheel
+	python -m build
 
 upload:
 	python3 -m twine upload dist/*
