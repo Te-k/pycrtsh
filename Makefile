@@ -1,5 +1,5 @@
 PWD = $(shell pwd)
-.PHONY: check
+.PHONY: check autofix ruff clean dist docs upload test
 
 check:
 	ruff format --check .
@@ -16,10 +16,13 @@ ruff:
 	ruff check -q .
 
 clean:
-	rm -rf $(PWD)/build $(PWD)/dist $(PWD)/pycrtsh.egg-info
+	rm -rf $(PWD)/build $(PWD)/dist $(PWD)/pycrtsh.egg-info $(PWD)/docs/build
 
 dist:
 	python -m build
+
+docs:
+	$(MAKE) -C docs html
 
 upload:
 	python3 -m twine upload dist/*
