@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pycrtsh"
+version = "0.3.15"
+description = "Python library to request crt.sh certificate information"
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Tek", email = "tek@randhome.io" }]
+keywords = ["security"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "requests",
+    "lxml==6.1.0",
+    "beautifulsoup4>=4.14.2",
+    "python-dateutil",
+    "psycopg2-binary>=2.9.11",
+]
+
+[project.optional-dependencies]
+tests = ["pytest"]
+
+[project.urls]
+Homepage = "https://github.com/Te-k/pycrtsh"
+
+[project.scripts]
+certsh = "pycrtsh.cli:main"
+
+[tool.setuptools]
+packages = ["pycrtsh"]

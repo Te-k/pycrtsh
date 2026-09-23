@@ -59,8 +59,8 @@ def main():
                         "%i\t\t%s\t%s\t%s"
                         % (
                             r["id"],
-                            r["logged_at"].isoformat(),
                             r["not_before"].isoformat(),
+                            r["not_after"].isoformat(),
                             r["ca"]["name"],
                         )
                     )
@@ -69,8 +69,8 @@ def main():
                         "%i\t%s\t%s\t%s"
                         % (
                             r["id"],
-                            r["logged_at"].isoformat(),
                             r["not_before"].isoformat(),
+                            r["not_after"].isoformat(),
                             r["ca"]["name"],
                         )
                     )

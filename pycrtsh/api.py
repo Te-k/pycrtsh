@@ -3,12 +3,11 @@
 # Copyright (c) 2017-2023 Etienne Tek Maynier
 # This software is released under the MIT license
 # See https://opensource.org/license/mit/
-import json
 import re
 from typing import Any, Dict, List, Optional
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 from dateutil.parser import parse
 
 
@@ -42,6 +41,13 @@ class DependenciesNeeded(PycrtshException):
         Exception.__init__(self, "Missing dependencies, please install psycopg2")
 
 
+class CrtshPlatformDown(PycrtshException):
+    """This exception is raised when the platform is down"""
+
+    def __init__(self):
+        Exception.__init__(self, "The crt.sh platform is down")
+
+
 class Crtsh(object):
     """
     Main Crtsh object
@@ -50,38 +56,69 @@ class Crtsh(object):
     def search(self, query: str, timeout: Optional[int] = None) -> List[Dict[str, Any]]:
         """
         Search crt.sh with the given query.
-        The query can be a domain, sha1 or sha256.
+        The query can be a domain or any identity indexed by crt.sh.
+        Searching by sha1/sha256 is not supported here as crt.sh returns
+        the certificate page directly, use get() for that.
 
         Args:
             query (str): the crt.sh query
-            timeoit (int) : optional timeout (default is None)
+            timeout (int) : optional timeout (default is None)
 
         Returns:
             list: list of certificates as dictionaries
         """
-        r = requests.get(
-            "https://crt.sh/", params={"q": query, "output": "json"}, timeout=timeout
-        )
-        nameparser = re.compile('([a-zA-Z]+)=("[^"]+"|[^,]+)')
         certs: List[Dict[str, Any]] = []
-        try:
-            for c in r.json():
-                certs.append(
-                    {
-                        "id": c["id"],
-                        "logged_at": parse(c["entry_timestamp"]),
-                        "not_before": parse(c["not_before"]),
-                        "not_after": parse(c["not_after"]),
-                        "name": c["name_value"],
-                        "ca": {
-                            "caid": c["issuer_ca_id"],
-                            "name": c["issuer_name"],
-                            "parsed_name": dict(nameparser.findall(c["issuer_name"])),
-                        },
-                    }
-                )
-        except json.decoder.JSONDecodeError:
-            pass
+
+        r = requests.get("https://crt.sh/", params={"q": query}, timeout=timeout)
+        if not r.ok:
+            if r.status_code == 502:
+                raise CrtshPlatformDown()
+            else:
+                raise PycrtshException("Invalid HTTP response {}".format(r.status_code))
+
+        soup = BeautifulSoup(r.text, "lxml")
+        table = soup.find("table", {"class": "identities"})
+        if table is None:
+            return certs
+
+        if not isinstance(table, Tag):
+            return certs
+
+        lines = table.find_all("tr", recursive=False)
+        if not lines:
+            return certs
+
+        # crt.sh reuses the "identities" class for other tables: a query for a
+        # sha1/sha256 returns the certificate page, whose first "identities"
+        # table lists CT log entries (Timestamp/Entry #/Log Operator/Log URL).
+        # Make sure we are looking at the search result table before indexing
+        # into the columns.
+        headers = [th.get_text(strip=True) for th in lines[0].find_all("th")]
+        if not headers or not headers[0].startswith("crt.sh ID"):
+            return certs
+
+        nameparser = re.compile('([a-zA-Z]+)=("[^"]+"|[^,]+)')
+        for entry in lines[1:]:
+            tds = entry.find_all("td")
+            if len(tds) < 6:
+                continue
+            issuer = tds[5].text
+            certs.append(
+                {
+                    "id": int(tds[0].text),
+                    "logged_at": None,  # Kept for compatibility with previous versions
+                    "not_before": parse(tds[1].text),
+                    "not_after": parse(tds[2].text),
+                    "name": tds[3].get_text("\n"),
+                    "matching_identities": tds[4].get_text("\n").split("\n"),
+                    "ca": {
+                        "caid": None,  # kept for compatibility with previous versions
+                        "name": issuer,
+                        "parsed_name": dict(nameparser.findall(issuer)),
+                    },
+                }
+            )
+
         return certs
 
     def get(self, query: str, type: str = "sha1") -> Dict[str, Any]:
