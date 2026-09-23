@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pycrtsh"
-version = "0.3.15"
+version = "0.3.16"
 description = "Python library to request crt.sh certificate information"
 readme = "README.md"
 requires-python = ">=3.8"
